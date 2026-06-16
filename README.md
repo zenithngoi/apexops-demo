@@ -1,16 +1,57 @@
-# React + Vite
+# ApexOps Demo — React Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## ⚠️ Project Isolation Notice
+This is a **completely separate project** from `Digital Marketing Agency/`.
 
-Currently, two official plugins are available:
+| | This project | Digital Marketing Agency |
+|---|---|---|
+| Purpose | Interactive demo app (React) | Agency system docs + landing page |
+| Stack | Vite + React + Claude API | Static HTML |
+| Files | `ApexOps-Demo/` | `Digital Marketing Agency/` |
+| Git repo | Own `.git` here | Own `.git` there |
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+**Do NOT copy files between these projects. Do NOT run npm here from the other folder.**
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## What This Is
+A React single-page app that runs the ApexOps 7-agent loop live, calling the Claude API in real time. Used as a client demo tool — shows prospects a full research → content → analytics → memory cycle in under 10 minutes.
 
-## Expanding the ESLint configuration
+## Stack
+- **Vite + React** (no backend, no database)
+- **Claude API** (direct from browser via API key input)
+- All state is in-memory (resets on refresh — intentional for demo)
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Structure
+```
+src/
+  App.jsx             — root layout
+  components/
+    AgentPanel.jsx    — 7 agent status cards
+    LoopProgress.jsx  — daily loop step tracker
+    MemoryFeed.jsx    — live memory.md display
+    ClientSwitcher.jsx
+    ResearchPanel.jsx
+    ContentPanel.jsx
+    AnalyticsPanel.jsx
+    AdsPanel.jsx
+  lib/
+    agents.js         — Claude API call wrappers per agent
+    prompts.js        — system prompt builders
+    memory.js         — in-memory state manager
+  styles/
+    global.css
+```
+
+## Run Locally
+```bash
+npm install
+npm run dev
+# Opens at http://localhost:5173
+```
+
+## Build Progress
+- [x] Stage 1 — Core shell (layout, panels, static state)
+- [ ] Stage 2 — Live Claude API agent calls
+- [ ] Stage 3 — Demo polish (ads book, sparklines, export)
+- [ ] Stage 4 — Demo validation run
