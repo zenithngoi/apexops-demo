@@ -1,4 +1,4 @@
-import { buildResearchPrompt, buildContentPrompt, buildAnalyticsPrompt, buildMemoryPrompt, buildOrchestratorPrompt } from './prompts.js';
+import { buildResearchPrompt, buildContentPrompt, buildAnalyticsPrompt, buildMemoryPrompt, buildOrchestratorPrompt, buildWeeklyReportPrompt } from './prompts.js';
 
 const callClaude = async (apiKey, { system, user }, onChunk) => {
   const res = await fetch('https://api.anthropic.com/v1/messages', {
@@ -46,3 +46,5 @@ export const runContentAgent     = (k, client, res, pb, fa, cy, cb) => callClaud
 export const runAnalyticsAgent   = (k, client, posts, pb, fa, cy, cb) => callClaude(k, buildAnalyticsPrompt(client, posts, pb, fa, cy), cb);
 export const runMemoryAgent      = (k, client, res, con, anl, pb, fa, cy, cb) => callClaude(k, buildMemoryPrompt(client, res, con, anl, pb, fa, cy), cb);
 export const runOrchestratorAgent = (k, client, res, con, mem, pb, fa, cy, cb) => callClaude(k, buildOrchestratorPrompt(client, res, con, mem, pb, fa, cy), cb);
+
+export const runWeeklyReportAgent = (k, client, metrics, roas, cpl, qualRate, pb, fa, cy, analyticsText, summaryText, notes, cb) => callClaude(k, buildWeeklyReportPrompt(client, metrics, roas, cpl, qualRate, pb, fa, cy, analyticsText, summaryText, notes), cb);

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import './styles/global.css';
 import { store } from './lib/memory.js';
-import { runResearchAgent, runContentAgent, runAnalyticsAgent, runMemoryAgent, runOrchestratorAgent } from './lib/agents.js';
+import { runResearchAgent, runContentAgent, runAnalyticsAgent, runMemoryAgent, runOrchestratorAgent, runWeeklyReportAgent } from './lib/agents.js';
 import ClientSwitcher from './components/ClientSwitcher.jsx';
 import AgentPanel from './components/AgentPanel.jsx';
 import LoopProgress from './components/LoopProgress.jsx';
@@ -12,6 +12,7 @@ import AnalyticsPanel from './components/AnalyticsPanel.jsx';
 import AdsPanel from './components/AdsPanel.jsx';
 import LeadsFunnel from './components/LeadsFunnel.jsx';
 import Sparklines from './components/Sparklines.jsx';
+import WeeklyReport from './components/WeeklyReport.jsx';
 
 const Panel = ({ title, badge, children, style = {} }) => (
   <div style={{ background:'var(--card)', border:'1px solid var(--border)', borderRadius:'var(--radius)', display:'flex', flexDirection:'column', overflow:'hidden', ...style }}>
@@ -190,6 +191,7 @@ export default function App() {
     { key:'leads',    label:'📥 Leads Funnel' },
     { key:'growth',   label:'📈 Growth'       },
     { key:'summary',   label:'🧭 Summary'   },
+    { key:'report',    label:'📋 Weekly Report' },
   ];
 
   const TAB_CONTENT = {
@@ -210,6 +212,19 @@ export default function App() {
             </pre>
         }
       </div>
+    ),
+    report: (
+      <WeeklyReport
+        client={state.client}
+        cycleCount={state.cycleCount}
+        playbook={state.playbook}
+        failures={state.failures}
+        analyticsText={state.analyticsText}
+        summaryText={summaryText}
+        onGenerate={state.apiKey ? (({ metrics, roas, cpl, qualRate, customNotes, playbook, failures, cycleCount, analyticsText, summaryText }, cb) =>
+          runWeeklyReportAgent(state.apiKey, state.client, metrics, roas, cpl, qualRate, playbook, failures, cycleCount, analyticsText, summaryText, customNotes, cb)
+        ) : null}
+      />
     ),
   };
 

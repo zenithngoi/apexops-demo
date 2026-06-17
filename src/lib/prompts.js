@@ -191,3 +191,66 @@ Write end-of-day summary (under 200 words):
 6. Any human approval needed?`,
   };
 };
+
+// ── WEEKLY REPORT AGENT ────────────────────────────────────────
+export const buildWeeklyReportPrompt = (client, metrics, roas, cpl, qualRate, playbook, failures, cycleCount, analyticsText, summaryText, customNotes) => {
+  return {
+    system: `You are the Orchestrator for ApexOps producing a weekly performance report.
+Write in concise professional markdown. No fluff. Every sentence earns its place.
+Tone: confident, data-driven, actionable. Audience: the agency CEO reviewing client results.
+
+${buildMemoryBlock(playbook, failures, cycleCount)}`,
+    user: `Generate a full weekly report for ${client} covering Cycle ${cycleCount}.
+
+## ACTUALS THIS WEEK
+- Total Spend: RM ${metrics.totalSpend.toLocaleString()}
+- Total Revenue: RM ${metrics.totalRevenue.toLocaleString()}
+- ROAS: ${roas}×
+- Total Leads: ${metrics.leads} | Qualified: ${metrics.qualified} (${qualRate}%)
+- Cost / Lead: RM ${cpl}
+- Best Campaign ROAS: ${metrics.bestROAS}×
+- Top Platform: ${metrics.topPlatform}
+- Avg CTR: ${metrics.avgCTR}%
+- New Followers: +${metrics.newFollowers.toLocaleString()}
+
+## ANALYTICS NOTES
+${analyticsText?.slice(0, 500) || 'N/A'}
+
+## ORCHESTRATOR SUMMARY
+${summaryText?.slice(0, 400) || 'N/A'}
+
+## AGENT MEMORY
+Playbook entries: ${playbook?.length || 0}
+Recent learnings: ${playbook?.slice(-3).join(' | ') || 'None'}
+Active failure bans: ${failures?.length || 0}
+
+${customNotes ? `## CLIENT NOTES\n${customNotes}` : ''}
+
+Write the report in this structure:
+# Weekly Report — ${client}
+**Week:** [date range] | **Cycle:** ${cycleCount} | **Generated:** ${new Date().toLocaleDateString()}
+
+## Executive Summary
+(3–4 sentences: what the week looked like, the headline win, the headline risk)
+
+## Performance Scorecard
+(table with all KPIs: Spend, Revenue, ROAS, Leads, Qualified, CPL, CTR, Followers)
+
+## Top Performers
+(which platform/content/pillar drove the best results this week — be specific)
+
+## What the AI System Learned
+(from the memory — what patterns are now in the playbook, what's banned)
+
+## Risks & Gaps
+(what underperformed, what's missing, what needs human attention)
+
+## Next Week Priorities
+(3 specific action items — ranked by expected ROAS impact)
+
+## Recommended Approvals Needed
+(any human decisions: ad budget changes, creative direction pivots, spend reallocation)
+
+Keep it under 600 words.`,
+  };
+};
