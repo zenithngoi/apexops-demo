@@ -155,3 +155,51 @@
 - Push ApexOps-Demo to GitHub
 - Connect to Vercel
 - Live public URL — no file:// needed
+
+---
+
+## ✅ Stage 8 — Deploy to Vercel (DONE)
+**Git commit:** `65c42a0` — 2026-06-17
+
+### Files Added
+- `vercel.json` — Vite framework, `dist/` output dir, SPA rewrite rule (`/*` → `/index.html`)
+- `.gitignore` — excludes `node_modules/`, `dist/`, `.vercel/`
+- `DEPLOY.md` — step-by-step guide for 2 deploy paths:
+  - **Option A:** GitHub → Vercel dashboard (auto-deploys on push)
+  - **Option B:** `npx vercel --prod` CLI direct deploy
+
+### Deploy Instructions (short version)
+```bash
+# In C:\Users\ngoil\Claude\Projects\ApexOps-Demo\
+
+# Option A — push to GitHub first, then import on vercel.com/new
+git remote add origin https://github.com/YOUR_USERNAME/apexops-demo.git
+git push -u origin main
+
+# Option B — CLI direct
+npx vercel login
+npx vercel --prod
+```
+
+### Build Status
+- ✓ 31 modules | 257KB JS | 0 errors
+- `vercel.json` config: framework=vite, outputDirectory=dist
+- API key entered at runtime — never in the build
+
+---
+
+## 🏁 ALL STAGES COMPLETE
+
+| Stage | Feature | Commit |
+|---|---|---|
+| 1 | Core scaffold + UI shell | `ee390dd` |
+| 2 | Live Claude API + memory system | `f88c6c7` |
+| 3 | Ads book + approval gate | `1c33d2a` |
+| 4 | Analytics + memory tabs | `a9f1483` |
+| 5 | Leads Funnel + Platform Sparklines | `4abea81` |
+| 6 | Weekly Report Generator | `b3bbc51` |
+| 7 | Multi-client onboarding + Apex PropFirm | `c9dc369` |
+| 8 | Vercel deploy config + instructions | `65c42a0` |
+
+**Final HTML:** 258,085 chars · **31 React modules** · **8 git commits**
+**apexops-demo.html** saved to `Digital Marketing Agency/` — open directly with double-click.
