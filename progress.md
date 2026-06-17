@@ -314,3 +314,55 @@ Full Local REST API bridge — no external dependencies, pure fetch calls.
 **Live URL:** https://apexops-demo.vercel.app  
 **GitHub:** https://github.com/zenithngoi/apexops-demo  
 **Local file:** `Digital Marketing Agency/apexops-demo.html`
+
+---
+
+## ✅ Stage 10A — Auto-Sync Obsidian at Cycle End (DONE)
+**Git commit:** `1e54700` — 2026-06-17
+
+### What changed
+- `App.jsx` — added `import { syncToVault } from './lib/obsidian.js'`
+- After `s.incrementCycle()`, new auto-sync block fires silently:
+  1. Reads `obs_key`, `obs_host`, `obs_port` from sessionStorage
+  2. If key exists → calls `syncToVault()` with full cycle data
+  3. On success → logs `[VAULT SYNC] Cycle N auto-pushed to Obsidian ✓` to Memory tab
+  4. On failure (Obsidian offline) → logs silently, loop continues normally
+
+### Behaviour
+- **Zero friction** — no manual "Push to Vault" click needed after each cycle
+- **Silent fail-safe** — if Obsidian is closed/offline, loop doesn't crash
+- **Still works without Obsidian** — if no `obs_key` in sessionStorage, block is skipped entirely
+- Push/Pull buttons in 🟣 Brain tab still work as manual overrides
+
+### Build
+- 33 modules, 269KB JS bundle
+- 9/11 string checks (2 minified as expected — all vault logic confirmed present)
+
+---
+
+## 📋 Stage 11 — Scheduled Daily Loop (DEFERRED — Build after 2-4 weeks of Obsidian use)
+**Status:** Planned — do not build until ~2026-07-15 or later
+
+### Why deferred
+- Need real loop data in Obsidian first before automating the trigger
+- Want to observe how memory compounds over manual cycles before removing human-in-the-loop
+- Obsidian vault structure should be stable before adding a scheduler that depends on it
+
+### What it will do
+- Fire the full 7-agent cycle automatically at **20:00 MYT daily**
+- Auto-push to Obsidian at end (already built via Stage 10A)
+- Post cycle summary to a configured webhook or log file
+- Guard: skip if previous cycle still running; skip if no API key
+
+### Implementation plan (when ready)
+1. Add `useScheduler()` hook with `setInterval` / `setTimeout` to fire at target time
+2. Store `lastRunDate` in sessionStorage — prevent double-runs
+3. Add scheduler config UI: enable/disable toggle, time picker, MYT timezone display
+4. Add "Next run" countdown in top bar
+5. Send cycle summary to optional webhook URL (Slack, Discord, etc.)
+
+### Prerequisites
+- 2-4 weeks of manual cycles with Obsidian auto-sync
+- Confirmed vault structure is stable (playbook.md, failures.md, cycles/*.md)
+- User comfortable with fully autonomous loop before enabling
+
