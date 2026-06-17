@@ -10,6 +10,8 @@ import ResearchPanel from './components/ResearchPanel.jsx';
 import ContentPanel from './components/ContentPanel.jsx';
 import AnalyticsPanel from './components/AnalyticsPanel.jsx';
 import AdsPanel from './components/AdsPanel.jsx';
+import LeadsFunnel from './components/LeadsFunnel.jsx';
+import Sparklines from './components/Sparklines.jsx';
 
 const Panel = ({ title, badge, children, style = {} }) => (
   <div style={{ background:'var(--card)', border:'1px solid var(--border)', borderRadius:'var(--radius)', display:'flex', flexDirection:'column', overflow:'hidden', ...style }}>
@@ -185,6 +187,8 @@ export default function App() {
     { key:'analytics', label:'📊 Analytics' },
     { key:'ads',       label:'🎯 Ads Book'  },
     { key:'memory',    label:`🧠 Memory${state.playbook?.length ? ` (${state.playbook.length})` : ''}` },
+    { key:'leads',    label:'📥 Leads Funnel' },
+    { key:'growth',   label:'📈 Growth'       },
     { key:'summary',   label:'🧭 Summary'   },
   ];
 
@@ -194,6 +198,8 @@ export default function App() {
     analytics: <AnalyticsPanel hasData={!!state.analytics} liveText={state.analyticsText||analyticsStream} streaming={state.agentStatus.analytics==='running'} />,
     ads:       <AdsPanel       hasData={!!state.ads} />,
     memory:    <MemoryFeed insights={state.memoryLog} failures={state.failures} playbook={state.playbook} cycleCount={state.cycleCount} />,
+    leads:    <LeadsFunnel />,
+    growth:   <Sparklines />,
     summary:   (
       <div style={{ height:'100%', overflowY:'auto' }}>
         {!(summaryText||summaryStream)
