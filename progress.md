@@ -203,3 +203,59 @@ npx vercel --prod
 
 **Final HTML:** 258,085 chars · **31 React modules** · **8 git commits**
 **apexops-demo.html** saved to `Digital Marketing Agency/` — open directly with double-click.
+
+---
+
+## ✅ Research: Brain Architecture + Loop Cadence (DONE)
+**Date:** 2026-06-17
+
+### Power User Brain Setup (2026 Consensus)
+- **Obsidian** dominates local-first lane — 1.5M users, 22% YoY growth
+- Architecture: `Obsidian Vault` → `MCP Server` → `AI Agents read/write directly`
+- Agents have continuous access to everything learned — no cold-start per session
+
+### Obsidian as ApexOps Persistent Brain
+Current: In-browser JS memory — wiped on page refresh
+Upgrade: Obsidian MCP — survives refresh, restarts, device switches
+
+**Vault structure:**
+```
+ApexOps/
+  clients/
+    Demo Broker/
+      playbook.md    ← permanent what-works
+      failures.md    ← permanent never-repeat
+      cycles/
+        cycle-001.md
+    Apex PropFirm/
+      playbook.md
+      failures.md
+```
+
+**MCP tools available (2026):**
+| Tool | Stars | Method |
+|---|---|---|
+| Claudian | 4,600 | Claude embedded in Obsidian sidebar |
+| mcp-obsidian | 3,000 | REST API via Local REST API plugin |
+| mcpvault | 909 | File-based, no plugin, BM25 search |
+
+### Loop Cadence (Platform Data 2026)
+| Platform | Optimal/week | Notes |
+|---|---|---|
+| TikTok | 2–5x | Consistency beats volume |
+| Instagram Reel | 3–5x | Daily Stories on top |
+| YouTube Short | 2–3x | |
+| X | 3–7x | Commentary + reactions |
+
+**Recommendation:** Daily loop at 20:00 MYT (Mon–Sun during acquisition phase).
+- Weekly Report generated Friday → human review → seeds next week's memory
+- Ads human approval every 3 days
+- 30–60 day mark: playbook hits 20–30 entries → ROAS compounds past 3×
+
+---
+
+## 🔄 Stage 9 — Obsidian Persistent Brain (IN PROGRESS)
+- Replace in-browser memory with Obsidian vault via MCP
+- Memory Agent writes playbook.md + failures.md + cycle logs after every loop
+- Agents read vault files at loop start — memory survives page refresh indefinitely
+- Scheduled daily loop at 20:00 MYT

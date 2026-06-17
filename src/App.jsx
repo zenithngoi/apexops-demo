@@ -15,6 +15,7 @@ import LeadsFunnel from './components/LeadsFunnel.jsx';
 import Sparklines from './components/Sparklines.jsx';
 import WeeklyReport from './components/WeeklyReport.jsx';
 import OnboardingModal from './components/OnboardingModal.jsx';
+import ObsidianPanel from './components/ObsidianPanel.jsx';
 
 const Panel = ({ title, badge, children, style = {} }) => (
   <div style={{ background:'var(--card)', border:'1px solid var(--border)', borderRadius:'var(--radius)', display:'flex', flexDirection:'column', overflow:'hidden', ...style }}>
@@ -208,6 +209,7 @@ export default function App() {
     { key:'growth',   label:'📈 Growth'       },
     { key:'summary',   label:'🧭 Summary'   },
     { key:'report',    label:'📋 Weekly Report' },
+    { key:'obsidian',  label:'🟣 Brain (Obsidian)' },
   ];
 
   const TAB_CONTENT = {
@@ -228,6 +230,27 @@ export default function App() {
             </pre>
         }
       </div>
+    ),
+    obsidian: (
+      <ObsidianPanel
+        client={state.client}
+        playbook={state.playbook}
+        failures={state.failures}
+        cycleCount={state.cycleCount}
+        cycleData={{
+          research: state.research,
+          content: state.content,
+          analyticsText: state.analyticsText,
+          memoryOut: memoryStream,
+          summaryText: summaryText,
+          playbook: state.playbook,
+          failures: state.failures,
+        }}
+        onHydrate={(pb, fa) => {
+          store.promoteToPlaybook(pb);
+          store.logFailure(fa);
+        }}
+      />
     ),
     report: (
       <WeeklyReport
