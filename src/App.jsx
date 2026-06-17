@@ -16,6 +16,7 @@ import Sparklines from './components/Sparklines.jsx';
 import WeeklyReport from './components/WeeklyReport.jsx';
 import OnboardingModal from './components/OnboardingModal.jsx';
 import ObsidianPanel from './components/ObsidianPanel.jsx';
+import { syncToVault } from './lib/obsidian.js';
 
 const Panel = ({ title, badge, children, style = {} }) => (
   <div style={{ background:'var(--card)', border:'1px solid var(--border)', borderRadius:'var(--radius)', display:'flex', flexDirection:'column', overflow:'hidden', ...style }}>
@@ -152,6 +153,27 @@ export default function App() {
       setSummaryText(summary);
       s.setAgent('orchestrator', 'done');
       s.incrementCycle();
+
+      // AUTO-SYNC TO OBSIDIAN — fires silently if Obsidian is configured
+      const obsKey  = sessionStorage.getItem('obs_key');
+      const obsHost = sessionStorage.getItem('obs_host') || '127.0.0.1';
+      const obsPort = sessionStorage.getItem('obs_port') || '27124';
+      if (obsKey) {
+        const latestMem = s.get();
+        try {
+          await syncToVault(
+            obsKey, latestMem.client,
+            latestMem.playbook, latestMem.failures,
+            latestMem.cycleCount,
+            { research, content: latestMem.content, analyticsText: analyticsOut, memoryOut: memOut, summaryText: summary },
+            obsHost, Number(obsPort)
+          );
+          s.addMemoryLog(`[VAULT SYNC] Cycle ${latestMem.cycleCount} auto-pushed to Obsidian ✓`);
+        } catch (obsErr) {
+          // Silent fail — Obsidian may be offline, don't break the loop
+          s.addMemoryLog(`[VAULT SYNC] Auto-sync skipped — Obsidian offline`);
+        }
+      }
 
     } catch (err) {
       setError(err.message || 'Error — check API key');
