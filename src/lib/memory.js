@@ -1,13 +1,14 @@
-// In-memory state store for the demo session.
-// Resets on page refresh — intentional for demo use.
-// DO NOT import from Digital Marketing Agency project.
+// In-memory state for the demo session.
+// Playbook persists across multiple loop runs in the same session — agents learn.
+// Resets on page refresh — intentional for demo.
 
 export const createMemoryStore = () => {
   let listeners = [];
   let state = {
     client: 'Demo Broker',
     apiKey: '',
-    loopStep: 0, // 0=idle, 1=research, 2=content, 3=publish, 4=analytics, 5=ads, 6=memory
+    loopStep: 0,
+    cycleCount: 0, // increments each full loop run
     agentStatus: {
       orchestrator: 'idle',
       research:     'idle',
@@ -17,12 +18,14 @@ export const createMemoryStore = () => {
       ads:          'idle',
       memory:       'idle',
     },
-    research:  null,   // string output
-    content:   null,   // { tiktok, instagram, youtube, twitter }
-    analytics: null,   // simulated metrics object
-    ads:       null,   // ads book entries
-    memoryLog: [],     // array of insight strings
-    postLog:   [],     // published post entries
+    research:   null,
+    content:    null,
+    analytics:  null,
+    analyticsText: null, // live analytics agent output
+    ads:        null,
+    memoryLog:  [],     // all staged insights (accumulates across cycles)
+    playbook:   [],     // promoted insights — fed back into every agent prompt
+    postLog:    [],
     sessionStarted: false,
   };
 
@@ -35,12 +38,27 @@ export const createMemoryStore = () => {
       state = { ...state, agentStatus: { ...state.agentStatus, [agent]: status } };
       notify();
     },
+    // Add a raw staged insight (shown in Memory tab)
     addMemoryLog: (insight) => {
       state = { ...state, memoryLog: [...state.memoryLog, insight] };
       notify();
     },
+    // Promote insights to the permanent playbook — fed back into ALL agents next cycle
+    promoteToPlaybook: (insights) => {
+      const newEntries = insights.filter(i => i && i.trim() && !state.playbook.includes(i));
+      if (newEntries.length > 0) {
+        // Hard cap at 20 entries (memory.md token budget equivalent)
+        const merged = [...state.playbook, ...newEntries].slice(-20);
+        state = { ...state, playbook: merged };
+        notify();
+      }
+    },
     addPostLog: (post) => {
       state = { ...state, postLog: [...state.postLog, post] };
+      notify();
+    },
+    incrementCycle: () => {
+      state = { ...state, cycleCount: state.cycleCount + 1 };
       notify();
     },
     subscribe: (fn) => {
