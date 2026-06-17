@@ -120,3 +120,38 @@
 - `onGenerate` callback wired — only active when API key is set
 - Build: ✓ 30 modules transformed, 247KB JS bundle
 - Final HTML: 247,858 chars, all 9 checks passed
+
+---
+
+## ✅ Stage 7 — Multi-Client Onboarding (DONE)
+**Git commit:** `c9dc369` — 2026-06-17
+
+### New: `src/components/OnboardingModal.jsx`
+- 3-step onboarding wizard: Basic Info → Voice & Strategy → Review & Confirm
+- Step 1: Client Name, Industry, Market, Target Audience
+- Step 2: Brand Tone (textarea), Content Pillars (chip selector), Active Platforms (chip selector), Do-Nots (seeds failures log), Known what-works (seeds playbook)
+- Step 3: Full review summary before confirmation
+- On confirm: registers client def in `prompts.js` + seeds memory in `memory.js`
+
+### New Static Client: `Apex PropFirm`
+- Industry: Proprietary Trading Firm | Market: Malaysia + Singapore
+- Platforms: TikTok, Instagram Reel, YouTube Short, LinkedIn
+- Pillars: Proof, Education, Behind the Scenes, Commentary
+- Completely separate memory slice — agents learn independently per client
+
+### Updates
+- `src/lib/prompts.js`: `registerClientDef()`, `getAllClientNames()`, `getClientDef()` — runtime client registry
+- `src/lib/memory.js`: `registerClient(name, seedPlaybook, seedFailures)`, `getClients()`
+- `src/components/ClientSwitcher.jsx`: shows all clients (static + dynamic), `+ Client` button
+- `src/App.jsx`: `handleAddClient()`, `showOnboarding` state, `clientList` state
+
+### Integration
+- Build: ✓ 31 modules transformed, 257KB JS bundle
+- Final HTML: 258,085 chars, all 11 checks passed
+
+---
+
+## 🔄 Stage 8 — Deploy to Vercel (IN PROGRESS)
+- Push ApexOps-Demo to GitHub
+- Connect to Vercel
+- Live public URL — no file:// needed
