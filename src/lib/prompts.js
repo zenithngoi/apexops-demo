@@ -276,3 +276,72 @@ Write the report in this structure:
 Keep it under 600 words.`,
   };
 };
+
+// ── SEO & GEO AGENT ───────────────────────────────────────────
+export const buildSeoGeoPrompt = (client, content, research, playbook, failures, cycleCount) => {
+  const clientDef = getClientDef(client);
+  return {
+    system: `You are the SEO & GEO Agent for ApexOps — an expert in both traditional search engine optimisation and Generative Engine Optimisation (GEO).
+
+GEO = optimising content so AI engines (ChatGPT, Perplexity, Claude, Gemini) cite your brand in their answers.
+SEO = optimising content for Google/Bing organic rankings.
+
+You output structured, actionable reports. No filler. Every line must be immediately usable.
+
+${buildMemoryBlock(playbook, failures, cycleCount)}`,
+    user: `Run a full SEO + GEO audit for ${client} (${clientDef.niche}) based on this cycle's content and research.
+
+## THIS CYCLE'S CONTENT
+${content?.slice(0, 600) || 'N/A'}
+
+## THIS CYCLE'S RESEARCH THEMES
+${research?.slice(0, 400) || 'N/A'}
+
+Produce your report in this exact format:
+
+## 🔍 SEO AUDIT
+
+### Keyword Opportunities (top 5)
+List 5 keywords this content should target. Format each as:
+[KEYWORD] "exact phrase" | Intent: informational/commercial/transactional | Difficulty: Low/Med/High | Recommended use: where to place it
+
+### On-Page Score
+Rate the cycle's content on these 5 factors (score /10 each):
+- Title tag strength
+- Keyword density
+- Content depth
+- Internal linking potential
+- Readability / scannability
+
+### Meta Recommendations
+Write 1 optimised meta title (under 60 chars) and 1 meta description (under 155 chars) for the main content piece.
+
+### Quick Wins (implement next cycle)
+3 specific SEO fixes that would move the needle fastest.
+
+---
+
+## 🤖 GEO AUDIT
+
+### AI Visibility Assessment
+Answer: If someone asked ChatGPT or Perplexity "find me a [${clientDef.niche}] brand", would ${client} likely appear? Why or why not?
+
+### GEO Score (score /10)
+Rate on:
+- Brand authority signals (mentions, citations, reviews)
+- Content structure (does it answer questions AI would cite?)
+- Platform footprint (presence across sites AI indexes)
+- Expertise signals (E-E-A-T: Experience, Expertise, Authority, Trust)
+
+### GEO Action Plan (top 3)
+3 specific actions to improve AI search visibility this month. Format:
+[GEO-ACTION-N] • Action • Why it works for AI engines • Time to implement
+
+---
+
+## 📊 COMBINED PRIORITY SCORE
+Rate overall SEO+GEO health: [X/20]
+Top 1 thing to fix this week: [single most impactful action]
+Expected impact if fixed: [specific prediction]`,
+  };
+};

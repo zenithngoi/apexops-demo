@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import './styles/global.css';
 import { store } from './lib/memory.js';
-import { runResearchAgent, runContentAgent, runAnalyticsAgent, runMemoryAgent, runOrchestratorAgent, runWeeklyReportAgent } from './lib/agents.js';
+import { runResearchAgent, runContentAgent, runAnalyticsAgent, runMemoryAgent, runOrchestratorAgent, runWeeklyReportAgent, runSeoGeoAgent } from './lib/agents.js';
 import { registerClientDef, getAllClientNames } from './lib/prompts.js';
 import ClientSwitcher from './components/ClientSwitcher.jsx';
 import AgentPanel from './components/AgentPanel.jsx';
@@ -16,6 +16,7 @@ import Sparklines from './components/Sparklines.jsx';
 import WeeklyReport from './components/WeeklyReport.jsx';
 import OnboardingModal from './components/OnboardingModal.jsx';
 import ObsidianPanel from './components/ObsidianPanel.jsx';
+import SeoGeoPanel from './components/SeoGeoPanel.jsx';
 import { syncToVault } from './lib/obsidian.js';
 
 const Panel = ({ title, badge, children, style = {} }) => (
@@ -44,6 +45,8 @@ export default function App() {
   const [memoryStream,    setMemoryStream]    = useState('');
   const [summaryStream,   setSummaryStream]   = useState('');
   const [summaryText,     setSummaryText]     = useState('');
+  const [seoGeoStream,   setSeoGeoStream]   = useState('');
+  const [seoGeoText,     setSeoGeoText]     = useState('');
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [clientList,     setClientList]     = useState(getAllClientNames());
 
@@ -68,6 +71,7 @@ export default function App() {
     setResearchStream(''); setContentStream('');
     setAnalyticsStream(''); setMemoryStream('');
     setSummaryStream(''); setSummaryText('');
+    setSeoGeoStream(''); setSeoGeoText('');
 
     const s = store;
     const { apiKey: key, client, playbook, failures, cycleCount } = s.get();
@@ -96,6 +100,14 @@ export default function App() {
       await runContentAgent(key, client, research, playbook, failures, cycleCount, c => { content = c; setContentStream(c); });
       s.set({ content });
       s.setAgent('content', 'done');
+
+      // 3b. SEO & GEO — analyses content right after it's written
+      setActiveTab('seogeo');
+      s.setAgent('seogeo', 'running');
+      let seoGeoOut = '';
+      await runSeoGeoAgent(key, client, content, research, playbook, failures, cycleCount, c => { seoGeoOut = c; setSeoGeoStream(c); });
+      setSeoGeoText(seoGeoOut);
+      s.setAgent('seogeo', 'done');
 
       // 4. PUBLISH (simulated)
       s.set({ loopStep:3 });
@@ -191,6 +203,7 @@ export default function App() {
     setResearchStream(''); setContentStream('');
     setAnalyticsStream(''); setMemoryStream('');
     setSummaryStream(''); setSummaryText('');
+    setSeoGeoStream(''); setSeoGeoText('');
     setError(''); setActiveTab('research');
   };
 
@@ -212,6 +225,8 @@ export default function App() {
       `\n---\n`,
       `## ✗ Failures Log (${s.failures?.length||0} entries)\n${s.failures?.join('\n')||'None'}`,
       `\n---\n`,
+      `## 🔍 SEO & GEO\n${seoGeoText||'N/A'}`,
+      `\n---\n`,
       `## 🧭 Orchestrator Summary\n${summaryText||'N/A'}`,
     ].join('\n');
     const a = Object.assign(document.createElement('a'), {
@@ -230,6 +245,7 @@ export default function App() {
     { key:'leads',    label:'📥 Leads Funnel' },
     { key:'growth',   label:'📈 Growth'       },
     { key:'summary',   label:'🧭 Summary'   },
+    { key:'seogeo',    label:'🔍 SEO & GEO'    },
     { key:'report',    label:'📋 Weekly Report' },
     { key:'obsidian',  label:'🟣 Brain (Obsidian)' },
   ];
@@ -272,6 +288,13 @@ export default function App() {
           store.promoteToPlaybook(pb);
           store.logFailure(fa);
         }}
+      />
+    ),
+    seogeo: (
+      <SeoGeoPanel
+        output={seoGeoText || seoGeoStream}
+        streaming={state.agentStatus.seogeo === 'running'}
+        hasData={!!seoGeoText}
       />
     ),
     report: (

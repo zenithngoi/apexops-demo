@@ -6,6 +6,7 @@ const AGENTS = [
   { key: 'analytics',    emoji: '📊', name: 'Analytics',    role: 'Truth Engine' },
   { key: 'ads',          emoji: '🎯', name: 'Ads Manager',  role: 'Capital' },
   { key: 'memory',       emoji: '🧠', name: 'Memory',       role: 'Playbook' },
+  { key: 'seogeo',      emoji: '🔍', name: 'SEO & GEO',   role: 'Visibility' },
 ];
 
 const STATUS_STYLES = {

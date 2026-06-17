@@ -58,7 +58,7 @@ export const createMemoryStore = () => {
       if (!clientMemory[client]) clientMemory[client] = makeClientMemory();
       state = { ...state, client, loopStep: 0, sessionStarted: false, research: null, content: null, analytics: null, analyticsText: null, ads: null };
       // Reset agent statuses for new client
-      state.agentStatus = { orchestrator:'idle', research:'idle', content:'idle', publishing:'idle', analytics:'idle', ads:'idle', memory:'idle' };
+      state.agentStatus = { orchestrator:'idle', research:'idle', content:'idle', publishing:'idle', analytics:'idle', ads:'idle', memory:'idle', seogeo:'idle' };
       notify();
     },
 
@@ -108,7 +108,7 @@ export const createMemoryStore = () => {
       state = {
         ...state, loopStep: 0, sessionStarted: false,
         research: null, content: null, analytics: null, analyticsText: null, ads: null,
-        agentStatus: { orchestrator:'idle', research:'idle', content:'idle', publishing:'idle', analytics:'idle', ads:'idle', memory:'idle' },
+        agentStatus: { orchestrator:'idle', research:'idle', content:'idle', publishing:'idle', analytics:'idle', ads:'idle', memory:'idle', seogeo:'idle' },
       };
       notify();
     },
