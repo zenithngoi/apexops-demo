@@ -366,3 +366,71 @@ Full Local REST API bridge — no external dependencies, pure fetch calls.
 - Confirmed vault structure is stable (playbook.md, failures.md, cycles/*.md)
 - User comfortable with fully autonomous loop before enabling
 
+
+---
+
+## ✅ Stage 11 — SEO & GEO Agent — 8th Agent (DONE)
+**Git commit:** `b894c8c` — 2026-06-17
+
+### What was added
+
+**`src/lib/prompts.js` — `buildSeoGeoPrompt()`**
+Full dual-mode prompt covering:
+- SEO: keyword opportunities (top 5), on-page score (5 factors /10 each), meta title + description, 3 quick wins
+- GEO: AI visibility assessment, GEO score (4 factors /10), 3 GEO action items with time-to-implement
+- Combined: /20 health score + #1 priority fix + expected impact
+
+**`src/lib/agents.js` — `runSeoGeoAgent()`**
+Runs after content agent, receives: content + research + playbook + failures + cycleCount
+
+**`src/components/SeoGeoPanel.jsx`** (new)
+4-tab UI: SEO | GEO | Priority | Raw
+- SEO tab: on-page score bars (5 metrics), full keyword + meta section
+- GEO tab: AI visibility scores, "What is GEO?" explainer card, GEO action plan
+- Priority tab: combined /20 health score
+- Score bars animate on render (green/amber/red by threshold)
+
+**`src/components/AgentPanel.jsx`** — added `🔍 SEO & GEO` row
+**`src/lib/memory.js`** — `seogeo:'idle'` in all agentStatus objects (2 locations)
+**`src/App.jsx`** — full wiring:
+- `seoGeoStream` + `seoGeoText` states
+- Agent fires after Content (step 3b), before Publish
+- Auto-switches to `🔍 SEO & GEO` tab during run
+- Added to Export .md output
+- Added to TABS array (11 tabs total)
+
+### Loop order (updated)
+1. 🧭 Orchestrator wake
+2. 🔎 Research
+3. ✍️ Content
+4. **🔍 SEO & GEO** ← NEW
+5. 📤 Publishing (simulated)
+6. 📊 Analytics
+7. 🎯 Ads
+8. 🧠 Memory
+9. 🧭 Orchestrator summary
+10. 🟣 Auto-sync → Obsidian
+
+### Build
+- 34 modules (was 33)
+- 280,391 bytes single-file HTML
+- 10/10 checks passed
+
+### What GEO means
+**Generative Engine Optimisation** — optimising content so AI engines (ChatGPT, Perplexity, Claude, Gemini) cite your brand in generated answers. As AI search replaces traditional search, GEO visibility becomes as important as Google ranking.
+
+---
+
+## Agent Roster (current — 8 agents + orchestrator)
+
+| # | Agent | Role |
+|---|---|---|
+| 🧭 | Orchestrator | Loop control + summary |
+| 1 | 🔎 Research | Trend + competitor intel |
+| 2 | ✍️ Content | Posts, hooks, captions |
+| 3 | 🔍 SEO & GEO | Keyword audit + AI visibility |
+| 4 | 📤 Publishing | Scheduling + posting |
+| 5 | 📊 Analytics | Performance interpretation |
+| 6 | 🎯 Ads Manager | Paid campaigns (human approval gate) |
+| 7 | 🧠 Memory | Playbook + failure distillation |
+| 8 | 🟣 Brain | Obsidian persistent memory |
