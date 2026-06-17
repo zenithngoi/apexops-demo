@@ -113,6 +113,23 @@ export const createMemoryStore = () => {
       notify();
     },
 
+    // Register a new client with optional seed memory
+    registerClient: (clientName, seedPlaybook = [], seedFailures = []) => {
+      if (!clientMemory[clientName]) {
+        clientMemory[clientName] = makeClientMemory();
+      }
+      if (seedPlaybook.length > 0) {
+        clientMemory[clientName].playbook = [...clientMemory[clientName].playbook, ...seedPlaybook].slice(-30);
+      }
+      if (seedFailures.length > 0) {
+        clientMemory[clientName].failures = [...clientMemory[clientName].failures, ...seedFailures].slice(-20);
+      }
+      notify();
+    },
+
+    // Get all registered client names
+    getClients: () => Object.keys(clientMemory),
+
     subscribe: (fn) => {
       listeners.push(fn);
       return () => { listeners = listeners.filter(l => l !== fn); };

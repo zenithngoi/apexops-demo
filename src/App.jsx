@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import './styles/global.css';
 import { store } from './lib/memory.js';
 import { runResearchAgent, runContentAgent, runAnalyticsAgent, runMemoryAgent, runOrchestratorAgent, runWeeklyReportAgent } from './lib/agents.js';
+import { registerClientDef, getAllClientNames } from './lib/prompts.js';
 import ClientSwitcher from './components/ClientSwitcher.jsx';
 import AgentPanel from './components/AgentPanel.jsx';
 import LoopProgress from './components/LoopProgress.jsx';
@@ -13,6 +14,7 @@ import AdsPanel from './components/AdsPanel.jsx';
 import LeadsFunnel from './components/LeadsFunnel.jsx';
 import Sparklines from './components/Sparklines.jsx';
 import WeeklyReport from './components/WeeklyReport.jsx';
+import OnboardingModal from './components/OnboardingModal.jsx';
 
 const Panel = ({ title, badge, children, style = {} }) => (
   <div style={{ background:'var(--card)', border:'1px solid var(--border)', borderRadius:'var(--radius)', display:'flex', flexDirection:'column', overflow:'hidden', ...style }}>
@@ -40,8 +42,22 @@ export default function App() {
   const [memoryStream,    setMemoryStream]    = useState('');
   const [summaryStream,   setSummaryStream]   = useState('');
   const [summaryText,     setSummaryText]     = useState('');
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [clientList,     setClientList]     = useState(getAllClientNames());
 
   useEffect(() => store.subscribe(setState), []);
+
+  const handleAddClient = (name, def, seedPlaybook, seedFailures) => {
+    // Register client def in prompts (for agent system prompts)
+    registerClientDef(name, def);
+    // Register client memory slice + seed memory
+    store.registerClient(name, seedPlaybook, seedFailures);
+    // Update client list
+    setClientList(getAllClientNames());
+    // Switch to new client
+    store.setClient(name);
+    setShowOnboarding(false);
+  };
 
   const runLoop = useCallback(async () => {
     if (!state.apiKey) { setShowApiInput(true); return; }
@@ -237,7 +253,7 @@ export default function App() {
           Apex<span style={{ color:'var(--accent)' }}>Ops</span>
           <span style={{ fontSize:'0.58rem', color:'var(--sub)', fontWeight:500, marginLeft:'0.3rem' }}>DEMO</span>
         </div>
-        <ClientSwitcher current={state.client} onChange={c => store.setClient(c)} />
+        <ClientSwitcher current={state.client} clients={clientList} onChange={c => store.setClient(c)} onAddClient={() => setShowOnboarding(true)} />
         {state.cycleCount > 0 && (
           <span style={{ fontSize:'0.65rem', color:'var(--accent)', fontWeight:700, background:'rgba(0,229,160,0.08)', border:'1px solid rgba(0,229,160,0.2)', padding:'0.12rem 0.45rem', borderRadius:'99px', flexShrink:0 }}>
             Cycle {state.cycleCount} · {state.playbook?.length||0} learned · {state.failures?.length||0} failures
@@ -316,6 +332,12 @@ export default function App() {
         </div>
 
       </div>
+      {showOnboarding && (
+        <OnboardingModal
+          onConfirm={handleAddClient}
+          onCancel={() => setShowOnboarding(false)}
+        />
+      )}
     </div>
   );
 }

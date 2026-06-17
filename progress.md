@@ -93,3 +93,30 @@
 | Single-file HTML build | `file://` compatibility — no server needed for local demo |
 | Human approval gate on ads | All spend decisions require explicit confirmation before execution |
 | In-memory API key only | Security — key never touches disk, localStorage, or logs |
+
+---
+
+## ✅ Stage 6 — Weekly Report Generator (DONE)
+**Git commit:** `b3bbc51` — 2026-06-17
+
+### New: `src/components/WeeklyReport.jsx`
+- Editable actuals: Spend, Revenue, Leads, Qualified, Best ROAS, Avg CTR, New Followers, Top Platform
+- Live-calculated KPIs: ROAS, Cost/Lead, Qualification Rate
+- **AI Generate** button → streams full Orchestrator weekly report via Claude API
+- **Export .md** → downloads `apexops-{client}-cycle{N}.md`
+- **Copy MD** → clipboard copy of full report
+- Displays agent memory: last 5 playbook entries + last 5 failures inline
+- Additional Notes textarea for human context
+- Static preview shown before AI generation
+
+### New Prompt: `buildWeeklyReportPrompt()` in `prompts.js`
+- Injects all actuals, memory, analytics text, orchestrator summary
+- Structures report: Executive Summary → Scorecard → Top Performers → What System Learned → Risks → Next Week Priorities → Approvals Needed
+
+### New Agent: `runWeeklyReportAgent()` in `agents.js`
+
+### Integration
+- New tab in `App.jsx`: `📋 Weekly Report`
+- `onGenerate` callback wired — only active when API key is set
+- Build: ✓ 30 modules transformed, 247KB JS bundle
+- Final HTML: 247,858 chars, all 9 checks passed

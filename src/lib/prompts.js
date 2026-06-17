@@ -12,7 +12,29 @@ export const CLIENTS = {
     tone: 'Confident but approachable. English + light Bahasa Malaysia. Never corporate.',
     pillars: ['Education', 'Proof', 'Lifestyle', 'Commentary'],
   },
+  'Apex PropFirm': {
+    industry: 'Proprietary Trading Firm',
+    market: 'Malaysia + Singapore (Phase 1)',
+    audience: '22–40 traders wanting to scale capital. Ambitious, risk-aware, results-driven.',
+    platforms: ['TikTok', 'Instagram Reel', 'YouTube Short', 'LinkedIn'],
+    tone: 'Aspirational and direct. No hype, no fake lifestyle — real performance, real traders. English only.',
+    pillars: ['Proof', 'Education', 'Behind the Scenes', 'Commentary'],
+  },
 };
+
+// Dynamic client registry — onboarded clients registered here at runtime
+const dynamicClients = {};
+
+// Register a new client definition at runtime (from OnboardingModal)
+export const registerClientDef = (name, def) => {
+  dynamicClients[name] = def;
+};
+
+// Get client definition — checks dynamic registry first, falls back to CLIENTS
+export const getClientDef = (name) => dynamicClients[name] || CLIENTS[name] || CLIENTS['Demo Broker'];
+
+// Get all known client names (static + dynamic)
+export const getAllClientNames = () => [...Object.keys(CLIENTS), ...Object.keys(dynamicClients)];
 
 const today = () => new Date().toLocaleDateString('en-MY', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -39,7 +61,7 @@ const buildMemoryBlock = (playbook = [], failures = [], cycleCount = 0) => {
 
 // ── RESEARCH AGENT ─────────────────────────────────────────────
 export const buildResearchPrompt = (client, playbook, failures, cycleCount) => {
-  const c = CLIENTS[client];
+  const c = getClientDef(client);
   return {
     system: `You are the Research Agent for ApexOps.
 Mission: Intelligence engine. Industry, competitors, platform trends — daily.
@@ -70,7 +92,7 @@ Produce:
 
 // ── CONTENT AGENT ──────────────────────────────────────────────
 export const buildContentPrompt = (client, research, playbook, failures, cycleCount) => {
-  const c = CLIENTS[client];
+  const c = getClientDef(client);
   return {
     system: `You are the Content Agent for ApexOps.
 Mission: Platform-native content that stops the scroll. Every piece is specific, never generic.
