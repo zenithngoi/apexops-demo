@@ -259,3 +259,58 @@ ApexOps/
 - Memory Agent writes playbook.md + failures.md + cycle logs after every loop
 - Agents read vault files at loop start — memory survives page refresh indefinitely
 - Scheduled daily loop at 20:00 MYT
+
+---
+
+## ✅ Stage 9 — Obsidian Persistent Brain (DONE)
+**Git commit:** `fdefebf` — 2026-06-17
+
+### New: `src/lib/obsidian.js`
+Full Local REST API bridge — no external dependencies, pure fetch calls.
+
+| Function | What it does |
+|---|---|
+| `testObsidianConnection()` | Pings vault, returns true/false |
+| `readPlaybook(client)` | Reads `ApexOps/clients/{client}/playbook.md` → string[] |
+| `readFailures(client)` | Reads `ApexOps/clients/{client}/failures.md` → string[] |
+| `writePlaybook(client, entries)` | Overwrites playbook.md with current entries |
+| `writeFailures(client, entries)` | Overwrites failures.md with current entries |
+| `writeCycleLog(client, n, data)` | Writes full cycle log to `cycles/cycle-00N.md` |
+| `syncToVault()` | Push: writes playbook + failures + cycle log in parallel |
+| `hydrateFromVault()` | Pull: loads vault memory back into session |
+
+### New: `src/components/ObsidianPanel.jsx`
+- API key + host + port config (sessionStorage — never persisted to disk)
+- 🔌 Test Connection — live ping to Obsidian REST API
+- ⬆ Push to Vault — syncs current session memory after every cycle
+- ⬇ Pull from Vault — hydrates session from vault on startup
+- Vault structure diagram + 5-step setup guide inline
+- Live activity log with timestamps
+
+### New tab in App.jsx: `🟣 Brain (Obsidian)`
+
+### Integration
+- `onHydrate(pb, fa)` callback → calls `store.promoteToPlaybook()` + `store.logFailure()`
+- cycleData passed as prop — includes research, content, analyticsText, memoryOut, summaryText
+- Build: ✓ 33 modules, 268KB bundle
+- Final HTML: 269,291 chars, 11/11 checks passed
+
+---
+
+## 🏁 FULL BUILD COMPLETE — All 9 Stages
+
+| Stage | Feature | Commit |
+|---|---|---|
+| 1 | Core scaffold + UI shell | `ee390dd` |
+| 2 | Live Claude API + per-client memory | `f88c6c7` |
+| 3 | Ads approval gate | `1c33d2a` |
+| 4 | Analytics + memory tabs | `a9f1483` |
+| 5 | Leads Funnel + Platform Sparklines | `4abea81` |
+| 6 | Weekly Report Generator | `b3bbc51` |
+| 7 | Multi-client onboarding + Apex PropFirm | `c9dc369` |
+| 8 | Vercel deploy + GitHub | `65c42a0` |
+| 9 | Obsidian persistent brain | `fdefebf` |
+
+**Live URL:** https://apexops-demo.vercel.app  
+**GitHub:** https://github.com/zenithngoi/apexops-demo  
+**Local file:** `Digital Marketing Agency/apexops-demo.html`
